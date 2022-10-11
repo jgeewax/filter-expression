@@ -71,6 +71,22 @@ describe('Evaluator', () => {
             expect(evaluator.matches({ age: 21 })).toBe(true);
             expect(evaluator.matches({ age: "21" })).toBe(false);
         });
-    });
 
+        test('filter on invalid field', () => {
+            let evaluator = Evaluator.fromFilterString('invalid.path = 20');
+            expect(evaluator.matches({})).toBe(false);
+            expect(evaluator.matches({ invalid: [1, 2, 3] })).toBe(false);
+        });
+
+        test('wildcard on invalid location', () => {
+            let evaluator = Evaluator.fromFilterString('name.* = "Bob"');
+            expect(evaluator.matches({ name: "Bob" })).toBe(false);
+        });
+
+        test('empty filter should match all', () => {
+            let evaluator = Evaluator.fromFilterString('');
+            expect(evaluator.matches({})).toBe(true);
+            expect(evaluator.matches({ age: 21 })).toBe(true);
+        });
+    });
 });

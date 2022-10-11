@@ -39,11 +39,14 @@ export class Evaluator {
 
         // We know we have at least one segment. Take the first one.
         let segment = fieldPath.segments[0].segment;
+
         // TODO: Move this into the Segment class. Figure out a name for this...
+        // Use the unquoted, un-backticked segment value (e.g., 'a.b', not '`a.b`').
         if (segment[0] == '`') {
-            segment = segment.substring(1, segment.length-1).replace('``', '`');
+            segment = segment.substring(1, segment.length - 1).replace('``', '`');
         }
 
+        // First handle wildcards as a special case. Then address every other segment type.
         if (segment == '*') {
             for (let input of inputs) {
                 // If this is an array, we just want to add all values in that
@@ -62,14 +65,16 @@ export class Evaluator {
             // E.g., if the segment is "tags", then for each object input, add
             // input["tags"] to the values output.
             for (let input of inputs) {
-                values.push(input[segment]);
+                // Try to fetch the nested values. If we can't, there's really nothing to do.
+                try {
+                    values.push(input[segment]);
+                } catch {}
             }
         }
 
         // Recurse with the remaining segments and the new values.
         return this.getValues(values, new FieldPath(fieldPath.segments.slice(1)));
     }
-
 
     compareMulti(values: Scalar[], expression: Expression): boolean {
         // True if ANY of the values matches the right side of ALL expressions.
@@ -86,43 +91,47 @@ export class Evaluator {
     }
 
     compare(value: Scalar, expression: Expression): boolean {
-        // True if the value matches the ENTIRE expression.
+        // True if the value matches the expression.
         // The fieldPath portion of the expression is ignored as we assume the
         // values provided have been "nagivated to" using getValues().
+
+        // First check if we have a valid comparator.
+        if (['>', '>=', '<', '<=', '=', '==', ':', '!='].indexOf(expression.comparator) == -1) {
+            throw new Error(`Unknown comparator ${expression.comparator}`);
+        }
+
+        // Check for strict inequality (works for all scalar values even with different types).
+        if (expression.comparator == '!=')
+            return (value !== expression.value.value);
+
+        // For all other operators, if the types don't match the expression cannot be true.
+        if (typeof value !== typeof expression.value.value) return false;
 
         // Check for equality using any of the three equality symbols.
         if ([':', '=', '=='].indexOf(expression.comparator) >= 0)
             return (value === expression.value.value);
 
-        // Check for strict inequality (works for all scalar values).
-        if (expression.comparator == '!=')
-            return (value !== expression.value.value);
+        // Outside of equality, any null values on the right-hand side cannot result in a match.
+        if (expression.value.value === null) return false;
 
-        // For the other operators (inequalities), the types must match.
-        if (typeof value !== typeof expression.value.value) return false;
+        // For inequalities, the only types that are allowed are numbers and strings.
+        if (typeof value != 'number' && typeof value != 'string') return false;
 
-        // Check for numeric/text inequality if we're dealing with a number or a
-        // string value (e.g., 'b' > 'a').
-        // All of these are pretty straightforward. Check the comparator and
-        // perform the comparison.
-        if (expression.value.value != null &&
-            (typeof value == 'number' || typeof value == 'string')) {
-            if (expression.comparator == '>')
-                return (value > expression.value.value);
+        // All of these are pretty straightforward. Check the comparator and evaluate.
+        if (expression.comparator == '>')
+            return (value > expression.value.value);
 
-            if (expression.comparator == '>=')
-                return (value >= expression.value.value);
+        if (expression.comparator == '>=')
+            return (value >= expression.value.value);
 
-            if (expression.comparator == '<')
-                return (value < expression.value.value);
+        if (expression.comparator == '<')
+            return (value < expression.value.value);
 
-            if (expression.comparator == '<=')
-                return (value <= expression.value.value);
-        }
+        if (expression.comparator == '<=')
+            return (value <= expression.value.value);
 
-        // If we find anything else, something broke with the grammar as we
-        // have covered all the comparator values.
-        throw new Error(`Unknown comparator ${expression.comparator}`);
+        // If we get here, something must have gone terribly wrong.
+        throw new Error('Unknown error');
     }
 
     matches(record: Record<string, any>): boolean {

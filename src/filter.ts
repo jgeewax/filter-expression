@@ -16,6 +16,9 @@ export class Filter {
     }
 
     static fromString(input: string): Filter {
+        // If the filter string is empty, just return an empty filter with no expressions.
+        if (input.trim() === '') return new Filter([]);
+
         let grammar = readFileSync('./filter.ebnf', { encoding: 'ascii' });
         let parser = new Grammars.W3C.Parser(grammar);
         let ast = parser.getAST(input.trim());
