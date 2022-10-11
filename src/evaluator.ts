@@ -98,6 +98,9 @@ export class Evaluator {
         if (expression.comparator == '!=')
             return (value !== expression.value.value);
 
+        // For the other operators (inequalities), the types must match.
+        if (typeof value !== typeof expression.value.value) return false;
+
         // Check for numeric/text inequality if we're dealing with a number or a
         // string value (e.g., 'b' > 'a').
         // All of these are pretty straightforward. Check the comparator and

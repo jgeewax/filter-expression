@@ -59,6 +59,18 @@ describe('Evaluator', () => {
             let evaluator = Evaluator.fromFilterString('labels.* = "tech"');
             expect(evaluator.matches({labels: { category: 'tech' } })).toBe(true);
         });
+
+        test('equality different types', () => {
+            let evaluator = Evaluator.fromFilterString('age = "21"');
+            expect(evaluator.matches({ age: 21 })).toBe(false);
+            expect(evaluator.matches({ age: "21" })).toBe(true);
+        });
+
+        test('inequality different types', () => {
+            let evaluator = Evaluator.fromFilterString('age > 20');
+            expect(evaluator.matches({ age: 21 })).toBe(true);
+            expect(evaluator.matches({ age: "21" })).toBe(false);
+        });
     });
 
 });
