@@ -1,0 +1,4 @@
+npm init --yes
+npm i --save-dev typescript @types/node
+npx tsc --init
+npm i --save-dev concurrently nodemon

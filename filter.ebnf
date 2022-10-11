@@ -1,0 +1,28 @@
+filter ::= expression (WS expression)*
+expression ::= fieldPath WS? comparator WS? value
+/* First match must be a valid field, not a quoted segment. */
+fieldPath ::= (segment | wildcard) ( DOT (segment | wildcard | backtickString) )*
+comparator ::= LESS_EQUALS | LESS_THAN | GREATER_EQUALS | GREATER_THAN | NOT_EQUALS | EQUALS
+value ::= string | number | true | false | null
+segment ::= (LETTER | UNDERSCORE) (LETTER | UNDERSCORE | DIGIT)*
+wildcard ::= "*"
+WS ::= [#x20#x09#x0A#x0D]+   /* Space | Tab | \n | \r */
+LETTER ::= [a-zA-Z]
+UNDERSCORE ::= "_"
+DIGIT ::= [0-9]
+BACKTICK ::= "`"
+DOT ::= "."
+string ::= '"' (([#x20-#x21] | [#x23-#x5B] | [#x5D-#xFFFF]) | #x5C (#x22 | #x5C | #x2F | #x62 | #x66 | #x6E | #x72 | #x74 | #x75 HEXDIG HEXDIG HEXDIG HEXDIG))* '"'
+backtickString ::= '`' ([#x20-#x5F] | [#x61-#xFFFF] | #x60 #x60)+ '`'
+HEXDIG ::= [a-fA-F0-9]
+
+LESS_EQUALS ::= "<="
+LESS_THAN ::= "<"
+GREATER_EQUALS ::= ">="
+GREATER_THAN ::= ">"
+NOT_EQUALS ::= "!="
+EQUALS ::= "==" | "=" | ":"
+true ::= "true"
+false ::= "false"
+null ::= "null"
+number ::= "-"? ("0" | [1-9] [0-9]*) ("." [0-9]+)? (("e" | "E") ( "-" | "+" )? ("0" | [1-9] [0-9]*))?
