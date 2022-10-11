@@ -29,20 +29,6 @@ export class Value {
 
     static fromAst(input: IToken) {
         return Value.fromString(input.text);
-        let value: Scalar;
-
-        if (input.text[0] == '"') {
-            value = input.text.substring(1, input.text.length - 1);
-        } else if (input.text == 'true') {
-            value = true;
-        } else if (input.text == 'false') {
-            value = false;
-        } else if (input.text == 'null') {
-            value = null;
-        } else {
-            value = parseFloat(input.text);
-        }
-        return new Value(value);
     }
 
     toString(): string {
