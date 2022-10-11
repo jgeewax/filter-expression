@@ -88,5 +88,10 @@ describe('Evaluator', () => {
             expect(evaluator.matches({})).toBe(true);
             expect(evaluator.matches({ age: 21 })).toBe(true);
         });
+
+        test('wildcard inequality', () => {
+            let evaluator = Evaluator.fromFilterString('metadata.* > 3');
+            expect(evaluator.matches({ metadata: { rating : 4.5, age: 21 }})).toBe(true);
+        });
     });
 });
