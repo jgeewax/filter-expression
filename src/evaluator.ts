@@ -157,4 +157,12 @@ export class Evaluator {
         // Only return true if all the expressions match.
         return true;
     }
+
+    getMatchingRecords(records: Record<string, any>[]): Record<string, any>[] {
+        let results: Record<string, any>[] = [];
+        for (let record of records) {
+            if (this.matches(record)) results.push(record);
+        }
+        return results;
+    }
 }
