@@ -3,9 +3,21 @@ import { IToken } from 'ebnf';
 import { Segment } from '../src/segment';
 
 describe('Segment', () => {
-    test('constructor', () => {
-        let seg = new Segment('fieldName');
-        expect(seg.segment).toEqual('fieldName');
+    describe('constructor', () => {
+        test('simple field', () => {
+            let seg = new Segment('fieldName');
+            expect(seg.segment).toEqual('fieldName');
+        });
+
+        test('escaped field', () => {
+            let seg = new Segment('`a.b`');
+            expect(seg.segment).toEqual('a.b');
+        });
+
+        test('escaped field with backticks', () => {
+            let seg = new Segment('`back``tick`');
+            expect(seg.segment).toEqual('back`tick');
+        });
     });
 
     describe('toString', () => {
@@ -33,5 +45,10 @@ describe('Segment', () => {
             let seg = new Segment('`back``tick`');
             expect(seg.toString({ quoted: false })).toEqual('back`tick');
         });
+
+        test('quoted wildcard', () => {
+            let seg = new Segment('*');
+            expect(seg.toString({ quoted: true })).toEqual('`*`');
+        })
     });
 });

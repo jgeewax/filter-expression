@@ -38,13 +38,8 @@ export class Evaluator {
         let values: any[] = [];
 
         // We know we have at least one segment. Take the first one.
+        // This should always be the true (unquoted) segment value.
         let segment = fieldPath.segments[0].segment;
-
-        // TODO: Move this into the Segment class. Figure out a name for this...
-        // Use the unquoted, un-backticked segment value (e.g., 'a.b', not '`a.b`').
-        if (segment[0] == '`') {
-            segment = segment.substring(1, segment.length - 1).replace('``', '`');
-        }
 
         // First handle wildcards as a special case. Then address every other segment type.
         if (segment == '*') {

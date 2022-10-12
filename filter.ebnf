@@ -1,11 +1,11 @@
 filter ::= expression (WS expression)*
 expression ::= fieldPath WS? comparator WS? value
 /* First match must be a valid field, not a quoted segment. */
-fieldPath ::= (segment | wildcard) ( DOT (segment | wildcard | backtickString) )*
+fieldPath ::= (segment | wildcard | backtickString) ( DOT (segment | wildcard | backtickString) )*
 comparator ::= LESS_EQUALS | LESS_THAN | GREATER_EQUALS | GREATER_THAN | NOT_EQUALS | EQUALS
 value ::= string | number | true | false | null
 segment ::= (LETTER | UNDERSCORE) (LETTER | UNDERSCORE | DIGIT)*
-wildcard ::= "*"
+wildcard ::= "*" | "`*`"
 WS ::= [#x20#x09#x0A#x0D]+   /* Space | Tab | \n | \r */
 LETTER ::= [a-zA-Z]
 UNDERSCORE ::= "_"

@@ -27,5 +27,9 @@ describe('Value', () => {
             expect(Value.fromString('1234').value).toBe(1234);
             expect(Value.fromString('1.2').value).toBe(1.2);
         });
+
+        test('complex throws error', () => {
+            expect(() => Value.fromString('{}')).toThrow('Invalid input');
+        });
     });
 });

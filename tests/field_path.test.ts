@@ -108,13 +108,20 @@ describe('FieldPath', () => {
         test('simple', () => {
             let segments = ['author', 'name'].map((s) => new Segment(s));
             let fieldPath = new FieldPath(segments);
-            expect(fieldPath.toString()).toEqual('[ author, name ]');
+            expect(fieldPath.toString()).toEqual('author.name');
         });
 
         test('not quoted', () => {
             let segments = ['`author`', '`name`'].map((s) => new Segment(s));
             let fieldPath = new FieldPath(segments);
-            expect(fieldPath.toString()).toEqual('[ author, name ]');
+            expect(fieldPath.toString()).toEqual('author.name');
+        });
+
+        test('quoted', () => {
+            let segments = ['`author`', '`name`', '`*`', '`a.b`'].map((s) => new Segment(s));
+            let fieldPath = new FieldPath(segments);
+            expect(fieldPath.toString()).toEqual('author.name.*.a.b');
+            expect(fieldPath.toString({ quoted: true })).toEqual('`author`.`name`.`*`.`a.b`');
         });
     });
 });

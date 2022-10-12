@@ -50,6 +50,11 @@ describe('Evaluator', () => {
             expect(evaluator.matches({tags: ['tech'] })).toBe(true);
         });
 
+        test('quoted array wildcard', () => {
+            let evaluator = Evaluator.fromFilterString('`tags`.`*` = "tech"');
+            expect(evaluator.matches({tags: ['tech'] })).toBe(true);
+        });
+
         test('nested array wildcard', () => {
             let evaluator = Evaluator.fromFilterString('tags.*.id = "1234"');
             expect(evaluator.matches({tags: [{ id: '1234' }] })).toBe(true);

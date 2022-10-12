@@ -21,9 +21,9 @@ export class FieldPath {
         }));
     }
 
-    toString(): string {
-        return '[ ' + this.segments.map((seg) => {
-            return seg.toString({ quoted: false });
-        }).join(', ') + ' ]';
+    toString(options: { quoted: boolean } = { quoted: false }): string {
+        // We use dot syntax here. For clarity, quoted should be true.
+        // For simplicity, it defaults to false.
+        return this.segments.map((s) => s.toString({ quoted: options.quoted })).join('.');
     }
 }

@@ -23,7 +23,7 @@ describe('Segment', () => {
             let comparator = '=' as Comparator;
             let value = Value.fromString('"1234"');
             let expr = new Expression(fieldPath, comparator, value);
-            expect(expr.toString()).toEqual('[ id ] = "1234"');
+            expect(expr.toString()).toEqual('id = "1234"');
         });
     });
 });

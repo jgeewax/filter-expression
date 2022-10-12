@@ -22,6 +22,10 @@ export class Segment {
     segment: string;
 
     constructor(segment: string) {
+        // Always store the true value if the input is escaped with backticks.
+        if (segment[0] === '`' && segment[segment.length-1] === '`') {
+            segment = segment.substring(1, segment.length - 1).replace('``', '`');
+        }
         this.segment = segment;
     }
 
@@ -32,9 +36,10 @@ export class Segment {
      * @returns string
      */
     toString(options: { quoted?: boolean } = { quoted: true }): string {
-        // TODO: Figure this out. I think there is more work here...
-        if (options.quoted === false && this.segment[0] == '`') {
-            return this.segment.substring(1, this.segment.length - 1).replace('``', '`');
+        // If the user wants quoted, make sure we surround everything with backticks
+        // (and escape other backticks with double backticks).
+        if (options.quoted === true) {
+            return '`' + this.segment.replace('`', '``') + '`';
         } else {
             return this.segment;
         }
