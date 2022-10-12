@@ -25,7 +25,7 @@ export class Evaluator {
         return new Evaluator(Filter.fromString(filter));
     }
 
-    getValues(inputs: any | any[], fieldPath: FieldPath): any | any[] {
+    getValues(inputs: any | any[], fieldPath: FieldPath): any[] {
         // Make sure we always have an array and never a single value.
         if (!Array.isArray(inputs)) inputs = [inputs];
 
@@ -41,7 +41,8 @@ export class Evaluator {
         // This should always be the true (unquoted) segment value.
         let segment = fieldPath.segments[0].segment;
 
-        // First handle wildcards as a special case. Then address every other segment type.
+        // First handle wildcards as a special case. Then address every other
+        // segment type.
         if (segment == '*') {
             for (let input of inputs) {
                 // If this is an array, we just want to add all values in that
@@ -60,7 +61,8 @@ export class Evaluator {
             // E.g., if the segment is "tags", then for each object input, add
             // input["tags"] to the values output.
             for (let input of inputs) {
-                // Try to fetch the nested values. If we can't, there's really nothing to do.
+                // Try to fetch the nested values. If we can't, there's really
+                // nothing to do.
                 try {
                     values.push(input[segment]);
                 } catch {}
@@ -68,7 +70,8 @@ export class Evaluator {
         }
 
         // Recurse with the remaining segments and the new values.
-        return this.getValues(values, new FieldPath(fieldPath.segments.slice(1)));
+        return this.getValues(
+            values, new FieldPath(fieldPath.segments.slice(1)));
     }
 
     compareMulti(values: Scalar[], expression: Expression): boolean {
@@ -91,28 +94,34 @@ export class Evaluator {
         // values provided have been "nagivated to" using getValues().
 
         // First check if we have a valid comparator.
-        if (['>', '>=', '<', '<=', '=', '==', ':', '!='].indexOf(expression.comparator) == -1) {
+        const comparators = ['>', '>=', '<', '<=', '=', '==', ':', '!='];
+        if (comparators.indexOf(expression.comparator) == -1) {
             throw new Error(`Unknown comparator ${expression.comparator}`);
         }
 
-        // Check for strict inequality (works for all scalar values even with different types).
+        // Check for strict inequality (works for all scalar values even with
+        // different types).
         if (expression.comparator == '!=')
             return (value !== expression.value.value);
 
-        // For all other operators, if the types don't match the expression cannot be true.
+        // For all other operators, if the types don't match the expression
+        // cannot be true.
         if (typeof value !== typeof expression.value.value) return false;
 
         // Check for equality using any of the three equality symbols.
         if ([':', '=', '=='].indexOf(expression.comparator) >= 0)
             return (value === expression.value.value);
 
-        // Outside of equality, any null values on the right-hand side cannot result in a match.
+        // Outside of equality, any null values on the right-hand side cannot
+        // result in a match.
         if (expression.value.value === null) return false;
 
-        // For inequalities, the only types that are allowed are numbers and strings.
+        // For inequalities, the only types that are allowed are numbers and
+        // strings.
         if (typeof value != 'number' && typeof value != 'string') return false;
 
-        // All of these are pretty straightforward. Check the comparator and evaluate.
+        // All of these are pretty straightforward. Check the comparator and
+        // evaluate.
         if (expression.comparator == '>')
             return (value > expression.value.value);
 
