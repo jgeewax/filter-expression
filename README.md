@@ -34,7 +34,7 @@ let result = evaluator.matches(record);
 5. Evaluate against nested values inside maps
    (e.g., `labelsMap.dynamicKey = "value"`).
 6. Evaluate against many values inside an array, succeeding if any values match
-   (e.g., `tags.* = "tech"` or `favoriteNumbers > 10`).
+   (e.g., `tags.* = "tech"` or `favoriteNumbers.* > 10`).
 7. Evaluate against all the values in an object or map
    (e.g., `labelsMap.* = "value"`).
 8. Refer to map keys that might have weird names using backticks to escape keys
