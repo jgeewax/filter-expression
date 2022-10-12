@@ -134,7 +134,7 @@ Wildcards allow for the following scenarios:
 
 This syntax supports the simple comparators for equality and inequality:
 
-- Equals: `=` or `==` or `:`
+- Equality: `=` or `==` or `:`
 - Inequality: `>`, `<`, `>=`, `<=`, and `!=`
 
 For equality, both the values and the types must match.
