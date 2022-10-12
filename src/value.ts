@@ -1,4 +1,5 @@
 import { IToken } from 'ebnf';
+import { isScalar } from './helpers';
 
 import { Scalar } from './types';
 
@@ -11,20 +12,9 @@ export class Value {
     }
 
     static fromString(input: string) {
-        let value: Scalar;
-
-        if (input[0] == '"') {
-            value = input.substring(1, input.length - 1);
-        } else if (input == 'true') {
-            value = true;
-        } else if (input == 'false') {
-            value = false;
-        } else if (input == 'null') {
-            value = null;
-        } else {
-            value = parseFloat(input);
-        }
-        return new Value(value);
+        let value = JSON.parse(input);
+        if (!isScalar(value)) throw new Error(`Invalid input ${input}`);
+        return new Value(value as Scalar);
     }
 
     static fromAst(input: IToken) {
@@ -32,10 +22,6 @@ export class Value {
     }
 
     toString(): string {
-        if (typeof this.value === 'string') {
-            return `"${this.value}"`;
-        } else {
-            return `${this.value}`;
-        }
+        return JSON.stringify(this.value);
     }
 }

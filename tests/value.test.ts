@@ -18,7 +18,7 @@ describe('Value', () => {
 
         test('strings', () => {
             expect(Value.fromString('"string"').value).toEqual('string');
-            expect(Value.fromString('"st\\"ring"').value).toEqual('st\\"ring');
+            expect(Value.fromString('"st\\"ring"').value).toEqual('st"ring');
             expect(Value.fromString('"true"').value).toEqual('true');
             expect(Value.fromString('"1234"').value).toBe('1234');
         });
